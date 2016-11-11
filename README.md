@@ -1,2 +1,2 @@
-# Zybo_dma_test
-test repo to integrate submodules into digilents github
+# zybo-templete
+a template repo for a new zynq project on the digilent zybo board
