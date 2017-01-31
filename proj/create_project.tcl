@@ -47,7 +47,7 @@ set_property "target_language" "VHDL" $obj
 # Uncomment the following 3 lines to greatly increase build speed while working with IP cores (and/or block diagrams)
 set_property "corecontainer.enable" "1" $obj
 set_property "ip_cache_permissions" "read write" $obj
-set_property "ip_output_repo" "[file normalize "$origin_dir/repo/cache"]" $obj
+set_property "ip_output_repo" "[file normalize "$repo_dir/cache"]" $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -71,7 +71,7 @@ add_files -quiet $src_dir/hdl
 
 # Add IPs
 # TODO: handle IP containers files
-add_files -quiet [glob -nocomplain ../src/ip/*.xci]
+add_files -quiet [glob -nocomplain $src_dir/ip/*.xci]
 
 # Add constraints
 add_files -fileset constrs_1 -quiet $src_dir/constraints
@@ -115,19 +115,19 @@ puts "INFO: Project created:$proj_name"
 
 # Uncomment this if building the block diagram from a tcl
 # Create block design
-# source $origin_dir/src/bd/system.tcl
+#source $src_dir/bd/system.tcl
 
 # Uncomment this block if importing an existing block diagram project
 # Import block design
-add_files -norecurse -quiet -fileset sources_1 [glob -nocomplain ../src/bd/*/*.bd]
-open_bd_design [glob -nocomplain ../src/bd/*/*.bd]
-set design_name [get_bd_designs]
-set file "$origin_dir/src/bd/$design_name/$design_name.bd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property "synth_checkpoint_mode" "Hierarchical" $file_obj
-}
+ add_files -norecurse -quiet -fileset sources_1 [glob -nocomplain $src_dir/bd/*/*.bd]
+ open_bd_design [glob -nocomplain $src_dir/bd/*/*.bd]
+ set design_name [get_bd_designs]
+ set file "$src_dir/bd/$design_name/$design_name.bd"
+ set file [file normalize $file]
+ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+ if { ![get_property "is_locked" $file_obj] } {
+   set_property "synth_checkpoint_mode" "Hierarchical" $file_obj
+ }
 
 # Generate the wrapper 
 set design_name [get_bd_designs]
