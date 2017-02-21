@@ -1,1 +1,0 @@
-This folder is the SDK workspace for the project. Make sure you open this workspace when opening up SDK from vivado after exporting the projects's hardware.

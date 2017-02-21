@@ -1,2 +1,5 @@
-# zybo-templete
-a template repo for a new zynq project on the digilent zybo board
+# Zybo Template <!-- Replace this line with the project name -->
+Created for Vivado 2016.4
+
+[Link to the project wiki](https://reference.digilentinc.com/doku.php)
+
