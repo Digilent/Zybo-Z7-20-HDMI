@@ -69,6 +69,7 @@ proj/*
 !proj/create_project.tcl
 !proj/cleanup.cmd
 !proj/cleanup.sh
+!proj/release.py
 
 # keep the empty folders
 !/**/.keep
