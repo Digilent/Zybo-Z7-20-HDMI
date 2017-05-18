@@ -10,6 +10,7 @@
 
 	Updated:
 		03/10/2017: added Debug file to zipped folders/files
+		05/12/2017(ArtVVB): added full /local inclusion in /repo
 """
 
 import fnmatch
@@ -48,9 +49,7 @@ def main(dest):
 				subdirs[:] = [] # just skip everything else in cache
 			else:
 				for filename in files:
-					if (fnmatch.fnmatch(filename, "*.xci") or fnmatch.fnmatch(filename, "*.patch")\
-					or fnmatch.fnmatch(filename, "*.tcl")):
-						zip(filename, dirname, projname, abs_src, zf)
+					zip(filename, dirname, projname, abs_src, zf) # keep contents of all other subdirectories (local, vivado-library usually)
 		
 	if os.path.isdir("sdk"): # system.mss, Makefile, .*project and .hdf files are to be zipped, and specific folders ignored
 		for dirname, subdirs, files in os.walk(os.path.join(abs_src, "sdk")):
