@@ -15,7 +15,7 @@ cd $dest_dir
 
 
 set part "xc7z010clg400-1"
-set brd_part "digilentinc.com:zybo:part0:1.0"
+set brd_part "digilentinc.com:zybo-z7-10:part0:1.0"
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir ".."
