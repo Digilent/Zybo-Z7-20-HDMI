@@ -263,6 +263,7 @@ proc create_root_design { parentCell } {
   # Create instance: axis_subset_converter_out, and set properties
   set axis_subset_converter_out [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_subset_converter:1.1 axis_subset_converter_out ]
   set_property -dict [ list \
+   CONFIG.M_HAS_TKEEP {0} \
    CONFIG.M_HAS_TLAST {1} \
    CONFIG.M_TDATA_NUM_BYTES {3} \
    CONFIG.M_TUSER_WIDTH {1} \
@@ -270,7 +271,7 @@ proc create_root_design { parentCell } {
    CONFIG.S_TDATA_NUM_BYTES {3} \
    CONFIG.S_TUSER_WIDTH {1} \
    CONFIG.TDATA_REMAP {tdata[23:16],tdata[7:0],tdata[15:8]} \
-   CONFIG.TKEEP_REMAP {tkeep[2:0]} \
+   CONFIG.TKEEP_REMAP {1'b0} \
    CONFIG.TLAST_REMAP {tlast[0]} \
    CONFIG.TUSER_REMAP {tuser[0:0]} \
  ] $axis_subset_converter_out
@@ -1231,4 +1232,6 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
+
+common::send_msg_id "BD_TCL-1000" "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 
