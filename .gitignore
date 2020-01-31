@@ -13,6 +13,11 @@
 !sdk/
 !src/
 !digilent-vivado-scripts/
+!hw_handoff/
+
+# hw handoff file
+hw_handoff/*
+!hw_handoff/*.xsa
 
 # vivado workspace
 proj/*
