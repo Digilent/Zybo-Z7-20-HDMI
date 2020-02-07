@@ -14,8 +14,8 @@
 !config
 !config/standalone_domain
 !config/standalone_domain/system.mss
-!config/zynq_fsbl_bsp
-!config/zynq_fsbl_bsp/system.mss
+!config/zynq_fsbl
+!config/zynq_fsbl/system.mss
 
 !hw_handoff
 !hw_handoff/*.xsa
