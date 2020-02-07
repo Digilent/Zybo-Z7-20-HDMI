@@ -1,13 +1,21 @@
-# set the workspace
-setws ./workspace
-#
-# CREATE APP FROM TEMPLATE
-#
-platform create -name design_1_wrapper -hw ./xsa/design_1_wrapper.xsa -proc ps7_cortexa9_0 -os standalone
-puts "platform design_1_wrapper created"
-app create -name hdmi -template {Empty Application} -proc ps7_cortexa9_0 -platform design_1_wrapper -domain standalone_domain -lang c
-puts "app hdmi created; sysproj hdmi_system created"
-# app config -name HDMI build-config release
-platform generate design_1_wrapper
+set sw_path [file normalize [file dirname [info script]]/..]
+set app_name "hdmi"
 
-importsources -name hdmi -path ./sources -linker-script
+set hw_file [glob [file join ${sw_path} hw_handoff *.xsa]]
+if {[llength $hw_file] > 1} {puts "ERROR: multiple XSA files detected"}
+
+platform active design_1_wrapper
+platform config -updatehw $hw_file
+puts "updated platform design_1_wrapper from XSA $hw_file"
+
+set orig_domain [domain active]
+
+domain active zynq_fsbl
+domain config -mss [file join ${sw_path} config zynq_fsbl system.mss]
+puts "configured domain zynq_fsbl from repo mss"
+
+domain active standalone_domain
+domain config -mss [file join ${sw_path} config standalone_domain system.mss]
+puts "configured domain standalone_domain from repo mss"
+
+domain active $orig_domain
