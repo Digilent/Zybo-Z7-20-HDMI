@@ -3,19 +3,37 @@
 !.gitignore
 
 !scripts
-!scripts/create_projects.xsct.tcl
-!scripts/config_projects.xsct.tcl
+scripts/*
+!scripts/create_workspace.xsct.tcl
+!scripts/config_workspace.xsct.tcl
 
 !workspace
+workspace/*
 !workspace/hdmi
+workspace/hdmi/*
 !workspace/hdmi/src
 !workspace/hdmi/src/**
 
-!config
-!config/standalone_domain
-!config/standalone_domain/system.mss
-!config/zynq_fsbl
-!config/zynq_fsbl/system.mss
+!apps
+apps/*
+!apps/hdmi
+apps/hdmi/*
+!apps/hdmi/linker
+apps/hdmi/linker/*
+!apps/hdmi/linker/lscript.ld
+!apps/hdmi/src
+!apps/hdmi/src/**
 
-!hw_handoff
-!hw_handoff/*.xsa
+!domains
+domains/*
+!domains/standalone_domain
+domains/standalone_domain/*
+!domains/standalone_domain/system.mss
+!domains/zynq_fsbl
+domains/zynq_fsbl/*
+!domains/zynq_fsbl/system.mss
+
+!hw_import
+!hw_import/*.xsa
+
+!**/.keep
