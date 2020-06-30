@@ -134,7 +134,7 @@ digilentinc.com:ip:dvi2rgb:2.0\
 xilinx.com:ip:v_tc:6.2\
 xilinx.com:ip:v_vid_in_axi4s:4.0\
 xilinx.com:ip:xlconstant:1.1\
-digilentinc.com:ip:axi_dynclk:1.0\
+digilentinc.com:ip:axi_dynclk:1.1\
 digilentinc.com:ip:rgb2dvi:1.4\
 xilinx.com:ip:v_axi4s_vid_out:4.0\
 "
@@ -217,7 +217,7 @@ proc create_hier_cell_VID_OUT { parentCell nameHier } {
   create_bd_pin -dir O vtc_irpt
 
   # Create instance: axi_dynclk_0, and set properties
-  set axi_dynclk_0 [ create_bd_cell -type ip -vlnv digilentinc.com:ip:axi_dynclk:1.0 axi_dynclk_0 ]
+  set axi_dynclk_0 [ create_bd_cell -type ip -vlnv digilentinc.com:ip:axi_dynclk:1.1 axi_dynclk_0 ]
 
   # Create instance: axis_subset_converter_0, and set properties
   set axis_subset_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_subset_converter:1.1 axis_subset_converter_0 ]
@@ -266,7 +266,7 @@ proc create_hier_cell_VID_OUT { parentCell nameHier } {
   # Create interface connections
   connect_bd_intf_net -intf_net AXIS_VID_OUT_1 [get_bd_intf_pins AXIS_MM2S] [get_bd_intf_pins axis_subset_converter_0/S_AXIS]
   connect_bd_intf_net -intf_net Conn1 [get_bd_intf_pins hdmi_out] [get_bd_intf_pins rgb2dvi_0/TMDS]
-  connect_bd_intf_net -intf_net S_AXI_DYNCLK_1 [get_bd_intf_pins S_AXI_DYNCLK] [get_bd_intf_pins axi_dynclk_0/s00_axi]
+  connect_bd_intf_net -intf_net S_AXI_DYNCLK_1 [get_bd_intf_pins S_AXI_DYNCLK] [get_bd_intf_pins axi_dynclk_0/S_AXI_LITE]
   connect_bd_intf_net -intf_net S_AXI_VTC_1 [get_bd_intf_pins S_AXI_VTC] [get_bd_intf_pins v_tc_0/ctrl]
   connect_bd_intf_net -intf_net axis_subset_converter_0_M_AXIS [get_bd_intf_pins axis_subset_converter_0/M_AXIS] [get_bd_intf_pins v_axi4s_vid_out_0/video_in]
   connect_bd_intf_net -intf_net v_axi4s_vid_out_0_vid_io_out [get_bd_intf_pins rgb2dvi_0/RGB] [get_bd_intf_pins v_axi4s_vid_out_0/vid_io_out]
@@ -276,8 +276,8 @@ proc create_hier_cell_VID_OUT { parentCell nameHier } {
   connect_bd_net -net axi_dynclk_0_LOCKED_O [get_bd_pins axi_dynclk_0/LOCKED_O] [get_bd_pins rgb2dvi_0/aRst_n]
   connect_bd_net -net axi_dynclk_0_PXL_CLK_5X_O [get_bd_pins axi_dynclk_0/PXL_CLK_5X_O] [get_bd_pins rgb2dvi_0/SerialClk]
   connect_bd_net -net axi_dynclk_0_PXL_CLK_O [get_bd_pins axi_dynclk_0/PXL_CLK_O] [get_bd_pins rgb2dvi_0/PixelClk] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_clk] [get_bd_pins v_tc_0/clk]
-  connect_bd_net -net gp0_aclk_1 [get_bd_pins gp0_aclk] [get_bd_pins axi_dynclk_0/REF_CLK_I] [get_bd_pins axi_dynclk_0/s00_axi_aclk] [get_bd_pins v_tc_0/s_axi_aclk]
-  connect_bd_net -net gp0_aresetn_1 [get_bd_pins gp0_aresetn] [get_bd_pins axi_dynclk_0/s00_axi_aresetn] [get_bd_pins v_tc_0/s_axi_aresetn]
+  connect_bd_net -net gp0_aclk_1 [get_bd_pins gp0_aclk] [get_bd_pins axi_dynclk_0/REF_CLK_I] [get_bd_pins axi_dynclk_0/s_axi_lite_aclk] [get_bd_pins v_tc_0/s_axi_aclk]
+  connect_bd_net -net gp0_aresetn_1 [get_bd_pins gp0_aresetn] [get_bd_pins axi_dynclk_0/s_axi_lite_aresetn] [get_bd_pins v_tc_0/s_axi_aresetn]
   connect_bd_net -net hp0_aclk_1 [get_bd_pins hp0_aclk] [get_bd_pins axis_subset_converter_0/aclk] [get_bd_pins v_axi4s_vid_out_0/aclk]
   connect_bd_net -net v_axi4s_vid_out_0_vtg_ce [get_bd_pins v_axi4s_vid_out_0/vtg_ce] [get_bd_pins v_tc_0/gen_clken]
   connect_bd_net -net v_tc_0_irq [get_bd_pins vtc_irpt] [get_bd_pins v_tc_0/irq]
@@ -1056,7 +1056,7 @@ proc create_root_design { parentCell } {
   # Create address segments
   assign_bd_address -offset 0x00000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces axi_vdma_0/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] -force
   assign_bd_address -offset 0x00000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces axi_vdma_0/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] -force
-  assign_bd_address -offset 0x43C10000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs VID_OUT/axi_dynclk_0/s00_axi/reg0] -force
+  assign_bd_address -offset 0x43C10000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs VID_OUT/axi_dynclk_0/S_AXI_LITE/S_AXI_LITE_reg] -force
   assign_bd_address -offset 0x41200000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs VID_IN/axi_gpio_video/S_AXI/Reg] -force
   assign_bd_address -offset 0x43000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_0/S_AXI_LITE/Reg] -force
   assign_bd_address -offset 0x43C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs VID_IN/v_tc_0/ctrl/Reg] -force
