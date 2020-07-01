@@ -9,10 +9,6 @@ scripts/*
 
 !workspace
 workspace/*
-!workspace/hdmi
-workspace/hdmi/*
-!workspace/hdmi/src
-!workspace/hdmi/src/**
 
 !apps
 apps/*
