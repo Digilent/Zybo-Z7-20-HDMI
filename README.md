@@ -6,7 +6,7 @@ Description
 
 This project demonstrates how to use the USB-UART Bridge, HDMI Sink and HDMI Source with the ZYNQ processor. Vivado is used to build the demo's hardware platform, and Xilinx SDK is used to program the bitstream onto the board and to build and deploy a C application. Video data streams in through the HDMI in port and out through the HDMI out port. A UART interface is available to configure what is output through HDMI. The configuring options are shown in the table below.
 
-The demo uses the usb-uart bridge to configure the HDMI Display , the Zybo Z7-20 must be connected to a computer over MicroUSB, which must be running a serial terminal. For more information on how to set up and use a serial terminal, such as Tera Term or PuTTY, refer to [this tutorial](https://reference.digilentinc.com/learn/programmable-logic/tutorials/tera-term).
+The demo uses the usb-uart bridge to configure the HDMI Display, the Zybo Z7-20 must be connected to a computer over MicroUSB, which must be running a serial terminal. For more information on how to set up and use a serial terminal, such as Tera Term or PuTTY, refer to [this tutorial](https://reference.digilentinc.com/learn/programmable-logic/tutorials/tera-term).
 
 | Option    | Function                                                                                                                 |
 | --------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -29,6 +29,12 @@ Requirements
 * **2 HDMI Cables**
 * **HDMI capable Monitor/TV**
 
+First and Foremost
+------------------
+
+* Vivado projects are version-specific. Source files are not backward compatible and not automatically forward compatible. Release tags specify the targeted Vivado version. Non-tagged commits on the master branch are either at the last tagged version or the next targeted version. This is not ideal and might be changed in the future adopting a better flow.
+* Digilent Github projects use submodules to bring in libraries. Use --recursive when cloning or git submodule init, if cloned already non-recursively.
+
 Demo Setup
 ----------
 These steps cover what is required to open the Vitis workspace, and to program the demo onto a board.
@@ -44,62 +50,29 @@ These steps cover what is required to open the Vitis workspace, and to program t
 - In the menu at the top of the window, select *Xilinx -> XSCT Console*.
 - In the console, enter the following command: `source [getws]/../scripts/create_workspace.xsct.tcl`
 - Wait until the hardware platform, system project, and application project have been created from the sources present in the repository. This may take up to several minutes.
+- To resolve some bugs in the vtc_v8_0 driver, make the following changes to the following files:
+  * zybo-z7-20-hdmi-v2020.1-1/ps7_cortexa9_0/standalone_domain/bsp/ps7_cortexa9_0/libsrc/vtc_v8_0/Makefile: Change OUTS to OBJECTS on line 20.
+  * zybo-z7-20-hdmi-v2020.1-1/ps7_cortexa9_0/standalone_domain/bsp/ps7_cortexa9_0/libsrc/vtc_v8_0/xvtc_intr.c: Change | to & on line 180.
+  * zybo-z7-20-hdmi-v2020.1-1/zynq_fsbl/zynq_fsbl_bsp/ps7_cortexa9_0/libsrc/vtc_v8_0/Makefile: Change OUTS to OBJECTS on line 20.
+  * zybo-z7-20-hdmi-v2020.1-1/zynq_fsbl/zynq_fsbl_bsp/ps7_cortexa9_0/libsrc/vtc_v8_0/xvtc_intr.c: Change | to & on line 180.
 - Build everything in the workspace by pressing *Ctrl-B* or by right clicking on the *System* project in the *Assistant* pane, and selecting *Build*.
-- With the board plugged in, powered on, and a serial terminal connected to its USBUART port, the demo application can be programmed onto the board by right clicking on the system project in the *Assistant* pane, and selecting *Run > SystemDebugger_hdmi_system (Launch SW Emulator)*
-- 
+- Plug in and power on the Zybo Z7-20, connect a serial terminal to its USBUART port, and connect the board's HDMI TX and HDMI RX ports to an HDMI monitor and an HDMI source, respectively.
+- the demo application can be programmed onto the board by right clicking on the system project in the *Assistant* pane, and selecting *Run > SystemDebugger_hdmi_system (Launch SW Emulator)*
+- HDMI cables can be connected to the board before or after the board has been programmed. The demo can be interacted with through the command menus presented over USBUART.
 
 Rebuilding Hardware
 -------------------
 
-These steps cover what is required to open, view, and rebuild the Vivado project, and pull an updated hardware platform in to the Vitis workspace.
+These steps cover what is required to open, view, and rebuild the Vivado project, and pull an updated hardware platform into the Vitis workspace. It is assumed that the *Demo Setup* steps have already been run through.
 
+- Launch Vivado 2020.1
+- In the TCL console at the bottom of the window, run the following command:
 
-1. Download the most recent release ZIP archive ("Zybo-Z7-20-HDMI-2018.2-*.zip") from the repo's [releases page](https://github.com/Digilent/Zybo-Z7-20-HDMI/releases).
-2. Extract the downloaded ZIP.
-3. Open the XPR project file, found at \<archive extracted location\>/vivado_proj/Zybo-Z7-20-HDMI.xpr, included in the extracted release archive in Vivado 2018.2.
-4. In the toolbar at the top of the Vivado window, select **File -> Export -> Export Hardware**. Select **\<Local to Project\>** as the Exported Location and make sure that the **Include bitstream** box is checked, then click **OK**.
-
-
-
-5. In the toolbar at the top of the Vivado window, select **File -> Launch SDK**. Select **\<Local to Project\>** as both the workspace location and exported location, then click **OK**.
-6. With Vivado SDK opened, wait for the hardware platform exported by Vivado to be imported.
-7. In the toolbar at the top of the SDK window, select **File -> New -> Application Project**.
-8. Fill out the fields in the first page of the New Application Project Wizard as in the table below. Most of the listed values will be the wizard's defaults, but are included in the table for completeness.
-
-| Setting                                 | Value                            |
-| --------------------------------------- | -------------------------------- |
-| Project Name                            | Zybo-Z7-20-HDMI                  |
-| Use default location                    | Checked box                      |
-| OS Platform                             | standalone                       |
-| Target Hardware: Hardware Platform      | design_1_wrapper_hw_platform_0   |
-| Target Hardware: Processor              | ps7_cortexa9_0                   |
-| Target Software: Language               | C                                |
-| Target Software: Board Support Package  | Create New (Zybo-Z7-20-HDMI_bsp) |
-
-9. Click **Next**.
-10. From the list of template applications, select "Empty Application", then click **Finish**.
-11. In the Project Explorer pane to the left of the SDK window, expand the new application project (named "Zybo-Z7-20-HDMI").
-12. Right click on the "src" subdirectory of the application project and select **Import**.
-13. In the "Select an import wizard" pane of the window that pops up, expand **General** and select **File System**. Then click **Next**.
-14. Fill out the fields of the "File system" screen as in the table below. Most of the listed values will be the defaults, but are included in the table for completeness.
-
-| Setting                                                | Value                                      |
-| -                                                      | -                                          |
-| From directory                                         | \<archive extracted location\>/sdk_appsrc  |
-| Files to import pane: sdk_appsrc                       | Checked box                                |
-| Into folder                                            | Zybo-Z7-20-HDMI/src                        |
-| Options: Overwrite existing resources without warning  | Checked box                                |
-| Options: Create top-level folder                       | Unchecked box                              |
-
-15. Click **Finish**.
-
-<Note for maintainers: This project does not require any additional configuration of application or bsp projects. Projects that require any of this configuration should have the steps required to do so described here.>
-
-16. Plug in the HDMI IN/OUT cables as well as the HDMI capable Monitor/TV.
-17. Open a serial terminal application (such as [TeraTerm](https://ttssh2.osdn.jp/index.html.en) and connect it to the Zybo Z7-20's serial port, using a baud rate of 115200.
-18. In the toolbar at the top of the SDK window, select **Xilinx -> Program FPGA**. Leave all fields as their defaults and click "Program".
-19. In the Project Explorer pane, right click on the "Zybo-Z7-20-HDMI" application project and select "Run As -> Launch on Hardware (System Debugger)".
-20. The application will now be running on the Zybo Z7-20. It can be interacted with as described in the first section of this README.
+  * `set argv ""; source <repo path>/hw/scripts/digilent_vivado_checkout.tcl`
+- With the project and block design open, the design can be viewed, and modifications can be made.
+- To build the project, click the *Generate Bitstream* button in the *Project Navigator* pane. Launch the Synthesis and Implementation runs, and, if desired, max out the number of jobs in order to reduce build time. This process may take up to 30 minutes, depending on the computer used.
+- In the toolbar at the top of the Vivado window, select **File -> Export -> Export Hardware**. Choose a *Fixed* platform, and include the bitstream. Pick a memorable name and location for the exported XSA file.
+- Returning to Vitis, in the *Assistant* pane, right click on the *Platform* project, and select *Update Hardware Specification*. Once the dialog pops up, *Browse* to the exported XSA file, select it, and click **OK** to load it into the platform. Regenerating BSP sources and reapplying the fix to vtc_v8_0 may be required.
 
 Next Steps
 ----------
