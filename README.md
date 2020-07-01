@@ -22,19 +22,45 @@ The demo uses the usb-uart bridge to configure the HDMI Display , the Zybo Z7-20
 Requirements
 ------------
 * **Zybo Z7-20**: To purchase a Zybo Z7-20, see the [Digilent Store](https://store.digilentinc.com/zybo-z7-zynq-7000-arm-fpga-soc-development-board/).
-* **Vivado 2018.2 Installation with Xilinx SDK**: To set up Vivado, see the [Installing Vivado and Digilent Board Files Tutorial](https://reference.digilentinc.com/vivado/installing-vivado/start).
-* **Serial Terminal Emulator Application**: For more information see the [Installing and Using a Terminal Emulator Tutorial](https://reference.digilentinc.com/learn/programmable-logic/tutorials/tera-term).
+* **Vivado and Vitis 2020.1 Installations**: To set up Vivado, see the [Installing Vivado, Vitis, and Digilent Board Files](https://reference.digilentinc.com/learn/programmable-logic/tutorials/2020.1/installation) tutorial on the Digilent wiki.**
+* **A Terminal with access to Git: Usually preinstalled on Linux computers. The bash terminal available from https://gitforwindows.org/ is recommended for Windows users.**
+* **Serial Terminal Emulator Application**: For more information see the [Installing and Using a Terminal Emulator](https://reference.digilentinc.com/learn/programmable-logic/tutorials/tera-term) guide on the Digilent wiki**.
 * **MicroUSB Cable**
 * **2 HDMI Cables**
 * **HDMI capable Monitor/TV**
 
 Demo Setup
 ----------
+These steps cover what is required to open the Vitis workspace, and to program the demo onto a board.
+
+- Clone this repository with the following command:
+  
+  * `git clone --recursive https://github.com/Digilent/Zybo-Z7-20-HDMI -b experimental/2020.1`
+  
+  * **Note:** *The --recursive flag is required as this repository uses submodules. If already cloned non-recursively, use `git submodule update --init` within the repo directory to get submodule sources.*
+  
+  * TODO: remove branch specifier before merge to master
+- Launch Vitis 2020.1, selecting (repo)/sw/workspace as the Vitis workspace.
+- In the menu at the top of the window, select *Xilinx -> XSCT Console*.
+- In the console, enter the following command: `source [getws]/../scripts/create_workspace.xsct.tcl`
+- Wait until the hardware platform, system project, and application project have been created from the sources present in the repository. This may take up to several minutes.
+- Build everything in the workspace by pressing *Ctrl-B* or by right clicking on the *System* project in the *Assistant* pane, and selecting *Build*.
+- With the board plugged in, powered on, and a serial terminal connected to its USBUART port, the demo application can be programmed onto the board by right clicking on the system project in the *Assistant* pane, and selecting *Run > SystemDebugger_hdmi_system (Launch SW Emulator)*
+- 
+
+Rebuilding Hardware
+-------------------
+
+These steps cover what is required to open, view, and rebuild the Vivado project, and pull an updated hardware platform in to the Vitis workspace.
+
 
 1. Download the most recent release ZIP archive ("Zybo-Z7-20-HDMI-2018.2-*.zip") from the repo's [releases page](https://github.com/Digilent/Zybo-Z7-20-HDMI/releases).
 2. Extract the downloaded ZIP.
 3. Open the XPR project file, found at \<archive extracted location\>/vivado_proj/Zybo-Z7-20-HDMI.xpr, included in the extracted release archive in Vivado 2018.2.
 4. In the toolbar at the top of the Vivado window, select **File -> Export -> Export Hardware**. Select **\<Local to Project\>** as the Exported Location and make sure that the **Include bitstream** box is checked, then click **OK**.
+
+
+
 5. In the toolbar at the top of the Vivado window, select **File -> Launch SDK**. Select **\<Local to Project\>** as both the workspace location and exported location, then click **OK**.
 6. With Vivado SDK opened, wait for the hardware platform exported by Vivado to be imported.
 7. In the toolbar at the top of the SDK window, select **File -> New -> Application Project**.
