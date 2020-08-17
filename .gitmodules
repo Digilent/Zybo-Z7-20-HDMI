@@ -1,7 +1,7 @@
-[submodule "repo/vivado-library"]
+[submodule "hw/repo/vivado-library"]
 	path = hw/repo/vivado-library
 	url = https://github.com/digilent/vivado-library.git
-[submodule "digilent-vivado-scripts"]
+[submodule "hw/scripts"]
 	path = hw/scripts
 	url = https://github.com/digilent/digilent-vivado-scripts.git
 [submodule "sw/scripts"]
