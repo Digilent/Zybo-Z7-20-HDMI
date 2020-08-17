@@ -39,10 +39,12 @@
 #include "timer_ps/timer_ps.h"
 #include "xparameters.h"
 
+#include "xil_cache.h"
+
 /*
  * XPAR redefines
  */
-#define DYNCLK_BASEADDR 		XPAR_AXI_DYNCLK_0_BASEADDR
+#define DYNCLK_BASEADDR 		XPAR_AXI_DYNCLK_0_S_AXI_LITE_BASEADDR
 #define VDMA_ID 				XPAR_AXIVDMA_0_DEVICE_ID
 #define HDMI_OUT_VTC_ID 		XPAR_V_TC_OUT_DEVICE_ID
 #define HDMI_IN_VTC_ID 			XPAR_V_TC_IN_DEVICE_ID
@@ -174,6 +176,7 @@ void DemoInitialize()
 	return;
 }
 
+
 void DemoRun()
 {
 	int nextFrame = 0;
@@ -204,6 +207,7 @@ void DemoRun()
 		{
 			userInput = 'r';
 		}
+		Xil_DCacheInvalidateRange((unsigned int) 0x00118380, DEMO_MAX_FRAME);
 
 		switch (userInput)
 		{
@@ -214,7 +218,7 @@ void DemoRun()
 			nextFrame = dispCtrl.curFrame + 1;
 			if (nextFrame >= DISPLAY_NUM_FRAMES)
 			{
-				nextFrame = 0;
+				nextFrame = 1;
 			}
 			DisplayChangeFrame(&dispCtrl, nextFrame);
 			break;
@@ -234,27 +238,31 @@ void DemoRun()
 			nextFrame = videoCapt.curFrame + 1;
 			if (nextFrame >= DISPLAY_NUM_FRAMES)
 			{
-				nextFrame = 0;
+				nextFrame = 1;
 			}
 			VideoChangeFrame(&videoCapt, nextFrame);
 			break;
 		case '7':
-			nextFrame = videoCapt.curFrame + 1;
-			if (nextFrame >= DISPLAY_NUM_FRAMES)
-			{
-				nextFrame = 0;
-			}
+			Xil_DCacheDisable();
+			nextFrame = DemoGetInactiveFrame(&dispCtrl, &videoCapt);
+//			nextFrame = videoCapt.curFrame + 1;
+//			if (nextFrame >= DISPLAY_NUM_FRAMES)
+//			{
+//				nextFrame = 1;
+//			}
 			VideoStop(&videoCapt);
 			DemoInvertFrame(pFrames[videoCapt.curFrame], pFrames[nextFrame], videoCapt.timing.HActiveVideo, videoCapt.timing.VActiveVideo, DEMO_STRIDE);
 			VideoStart(&videoCapt);
 			DisplayChangeFrame(&dispCtrl, nextFrame);
+			Xil_DCacheEnable();
 			break;
 		case '8':
-			nextFrame = videoCapt.curFrame + 1;
-			if (nextFrame >= DISPLAY_NUM_FRAMES)
-			{
-				nextFrame = 0;
-			}
+			nextFrame = DemoGetInactiveFrame(&dispCtrl, &videoCapt);
+//			nextFrame = videoCapt.curFrame + 1;
+//			if (nextFrame >= DISPLAY_NUM_FRAMES)
+//			{
+//				nextFrame = 1;
+//			}
 			VideoStop(&videoCapt);
 			DemoScaleFrame(pFrames[videoCapt.curFrame], pFrames[nextFrame], videoCapt.timing.HActiveVideo, videoCapt.timing.VActiveVideo, dispCtrl.vMode.width, dispCtrl.vMode.height, DEMO_STRIDE);
 			VideoStart(&videoCapt);
@@ -400,10 +408,32 @@ void DemoCRMenu()
 	xil_printf("Select a new resolution:");
 }
 
+int DemoGetInactiveFrame(DisplayCtrl *DispCtrlPtr, VideoCapture *VideoCaptPtr)
+{
+	int i;
+	for (i=1; i<DISPLAY_NUM_FRAMES; i++)
+	{
+		if (DispCtrlPtr->curFrame == i && DispCtrlPtr->state == DISPLAY_RUNNING)
+		{
+			continue;
+		}
+		else if (VideoCaptPtr->curFrame == i && VideoCaptPtr->state == VIDEO_STREAMING)
+		{
+			continue;
+		}
+		else
+		{
+			return i;
+		}
+	}
+	xil_printf("Unreachable error state reached. All buffers are in use.\r\n");
+}
+
 void DemoInvertFrame(u8 *srcFrame, u8 *destFrame, u32 width, u32 height, u32 stride)
 {
 	u32 xcoi, ycoi;
 	u32 lineStart = 0;
+	Xil_DCacheInvalidateRange((unsigned int) srcFrame, DEMO_MAX_FRAME);
 	for(ycoi = 0; ycoi < height; ycoi++)
 	{
 		for(xcoi = 0; xcoi < (width * 3); xcoi+=3)

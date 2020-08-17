@@ -321,7 +321,7 @@ int DisplayInitialize(DisplayCtrl *dispPtr, XAxiVdma *vdma, u16 vtcId, u32 dynCl
 	/*
 	 * Initialize all the fields in the DisplayCtrl struct
 	 */
-	dispPtr->curFrame = 0;
+	dispPtr->curFrame = 1;
 	dispPtr->dynClkAddr = dynClkAddr;
 	for (i = 0; i < DISPLAY_NUM_FRAMES; i++)
 	{
@@ -453,6 +453,7 @@ int DisplayChangeFrame(DisplayCtrl *dispPtr, u32 frameIndex)
 	 */
 	if (dispPtr->state == DISPLAY_RUNNING)
 	{
+		xdbg_printf(XDBG_DEBUG_GENERAL, "Change frame: current index = %d next index = %d\r\n", dispPtr->curFrame, frameIndex);
 		Status = XAxiVdma_StartParking(dispPtr->vdma, dispPtr->curFrame, XAXIVDMA_READ);
 		if (Status != XST_SUCCESS)
 		{

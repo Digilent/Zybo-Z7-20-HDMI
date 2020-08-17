@@ -29,6 +29,8 @@
 /* ------------------------------------------------------------ */
 
 #include "xil_types.h"
+#include "video_capture/video_capture.h"
+#include "display_ctrl/display_ctrl.h"
 
 /* ------------------------------------------------------------ */
 /*					Miscellaneous Declarations					*/
@@ -55,6 +57,7 @@ void DemoRun();
 void DemoPrintMenu();
 void DemoChangeRes();
 void DemoCRMenu();
+int DemoGetInactiveFrame(DisplayCtrl *DispCtrlPtr, VideoCapture *VideoCaptPtr);
 void DemoInvertFrame(u8 *srcFrame, u8 *destFrame, u32 width, u32 height, u32 stride);
 void DemoPrintTest(u8 *frame, u32 width, u32 height, u32 stride, int pattern);
 void DemoScaleFrame(u8 *srcFrame, u8 *destFrame, u32 srcWidth, u32 srcHeight, u32 destWidth, u32 destHeight, u32 stride);

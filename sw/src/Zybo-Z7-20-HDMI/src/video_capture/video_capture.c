@@ -183,6 +183,8 @@ int VideoStart(VideoCapture *videoPtr)
 		videoPtr->vdmaConfig.FrameStoreStartAddr[i] = (u32)  videoPtr->framePtr[i];
 	}
 
+
+
 	xdbg_printf(XDBG_DEBUG_GENERAL, "Starting VDMA for Video capture\n\r");
 	Status = XAxiVdma_DmaConfig(videoPtr->vdma, XAXIVDMA_WRITE, &(videoPtr->vdmaConfig));
 	if (Status != XST_SUCCESS)
@@ -252,7 +254,7 @@ int VideoInitialize(VideoCapture *videoPtr, INTC *intCtrl, XAxiVdma *vdma, u16 g
 	/*
 	 * Initialize all the fields in the VideoCapture struct
 	 */
-	videoPtr->curFrame = 0;
+	videoPtr->curFrame = 1;
 	for (i = 0; i < VIDEO_NUM_FRAMES; i++)
 	{
 		videoPtr->framePtr[i] = framePtr[i];
